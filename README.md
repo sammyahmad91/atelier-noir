@@ -4,6 +4,8 @@ A small full-stack product for people who collect perfume the way others collect
 virtual shelf, read its olfactive pyramid, journal every wear — and the atelier tells you **what to wear tonight**
 and **what to layer it with**.
 
+**Live:** https://atelier-noir-wine.vercel.app · **Source:** https://github.com/sammyahmad91/atelier-noir
+
 > The original take-home brief is preserved in [`BRIEF.md`](./BRIEF.md).
 
 ## Why this
@@ -59,6 +61,10 @@ into an accord profile. From that profile:
 - No password reset or OAuth.
 - No automated tests yet. The engine is pure functions in `src/lib/engine.ts`, so it's the natural first target.
 - Weather is chosen manually rather than fetched from a weather API.
+- Default season, hour and greeting use the server's clock (UTC on Vercel), not the visitor's timezone.
+- The live deployment stores data in Vercel's temporary `/tmp`, so new accounts and edits can reset when an
+  instance is recycled. The demo atelier is re-seeded automatically. Set `DATABASE_URL` to a Turso database for
+  durable storage.
 
 ## Running locally
 

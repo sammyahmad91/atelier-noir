@@ -255,6 +255,45 @@ body::after {
   transform: scaleX(0);
 }
 
+@keyframes shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+
+@keyframes caret {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* A candle-glint passing across text while NOIR composes. */
+.shimmer {
+  background: linear-gradient(90deg, var(--color-dust) 35%, var(--color-gold) 50%, var(--color-dust) 65%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 2.6s linear infinite;
+}
+
+.caret {
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  margin-left: 3px;
+  vertical-align: -0.14em;
+  background: var(--color-gold);
+  animation: caret 1s steps(1) infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal,
   .bar-fill {
@@ -264,7 +303,13 @@ body::after {
     filter: none;
   }
   .glow,
-  .float {
+  .float,
+  .caret {
     animation: none;
+  }
+  .shimmer {
+    animation: none;
+    background: none;
+    color: var(--color-mist);
   }
 }

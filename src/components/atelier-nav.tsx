@@ -8,6 +8,7 @@ const LINKS = [
   { href: "/atelier/wardrobe", label: "Wardrobe" },
   { href: "/atelier/journal", label: "Journal" },
   { href: "/atelier/layering", label: "Layering" },
+  { href: "/atelier/noir", label: "Noir AI" },
 ];
 
 export function AtelierNav() {

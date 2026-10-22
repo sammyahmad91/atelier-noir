@@ -1,0 +1,4 @@
+local.db
+local.db-*
+.next
+node_modules

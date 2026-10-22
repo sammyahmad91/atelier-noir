@@ -39,6 +39,17 @@ export const getWears = cache(async () => {
   return db.select().from(wears).where(eq(wears.userId, user.id)).orderBy(desc(wears.wornAt));
 });
 
+/** For route handlers: the signed-in collector's shelf and journal, or null rather than a redirect. */
+export async function getSessionAtelier() {
+  const user = await getSessionUser();
+  if (!user) return null;
+  const [shelf, journal] = await Promise.all([
+    db.select().from(fragrances).where(eq(fragrances.userId, user.id)).orderBy(desc(fragrances.createdAt)),
+    db.select().from(wears).where(eq(wears.userId, user.id)).orderBy(desc(wears.wornAt)),
+  ]);
+  return { user, fragrances: shelf, wears: journal };
+}
+
 export const getFragrance = cache(async (id: string) => {
   const user = await requireUser();
   const [f] = await db
