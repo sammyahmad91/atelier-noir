@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useEffectEvent, useRef, useState, useSyncExternalStore } from "react";
 import { Flacon } from "@/components/flacon";
 import { splitStream } from "@/lib/noir/protocol";
 import type { BottleRef, NoirCard } from "@/lib/noir/types";
@@ -148,11 +148,14 @@ export function NoirConcierge({
   bottles,
   wears,
   suggestions,
+  initialQuestion,
 }: {
   storageKey: string;
   bottles: number;
   wears: number;
   suggestions: string[];
+  /** From `?q=` — asked once on arrival, then removed from the URL. */
+  initialQuestion?: string;
 }) {
   const store = storeFor(storageKey);
   const turns = useSyncExternalStore(store.subscribe, store.get, () => EMPTY);
@@ -161,7 +164,21 @@ export function NoirConcierge({
   const abortRef = useRef<AbortController | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const stickRef = useRef(true);
+  const askedRef = useRef<string | null>(null);
   const busy = phase !== "idle";
+
+  const askOnArrival = useEffectEvent((q: string) => send(q));
+  useEffect(() => {
+    if (!initialQuestion) return;
+    // Deferred so React's dev double-mount cancels the first attempt instead of aborting its request.
+    const t = setTimeout(() => {
+      if (askedRef.current === initialQuestion) return;
+      askedRef.current = initialQuestion;
+      window.history.replaceState(null, "", "/atelier/noir");
+      askOnArrival(initialQuestion);
+    }, 0);
+    return () => clearTimeout(t);
+  }, [initialQuestion]);
 
   useEffect(() => {
     const onScroll = () => {

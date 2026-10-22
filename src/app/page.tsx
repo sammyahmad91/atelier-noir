@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { enterDemo } from "@/app/actions/auth";
 import { Flacon } from "@/components/flacon";
+import { NoirLauncher } from "@/components/noir-launcher";
 import { Wordmark } from "@/components/wordmark";
 import { getSessionUser } from "@/lib/dal";
 
@@ -150,6 +151,7 @@ export default async function Home() {
           <p className="font-serif italic">Composed with patience. Worn with intention.</p>
         </div>
       </footer>
+      <NoirLauncher demo={!user} />
     </main>
   );
 }

@@ -69,6 +69,12 @@ deterministically by `src/lib/noir/`, which calls the same engine as the rest of
 The conversation lives in client state and is mirrored to `sessionStorage`, so it survives navigation and reloads
 within the tab.
 
+**Ask NOIR AI widget** — a small floating launcher (bottom-right, `src/components/noir-launcher.tsx`) opens a teaser
+with three suggested questions and an “Open NOIR AI” action. It appears on the landing page and on every `/atelier/*`
+page except the concierge itself. Choosing a question opens `/atelier/noir?q=…`, which asks it once on arrival and
+then strips it from the URL. Logged-out visitors on the landing page are first signed into the demo atelier: the
+`enterDemo` server action accepts a `next` target, honoured only for same-origin paths under `/atelier`.
+
 ### The engine, briefly
 
 Every note is mapped to one of 12 accords through a small lexicon. Base notes weigh 2×, heart notes 1.5× and top

@@ -7,6 +7,7 @@ import * as z from "zod";
 import { db, ensureDb } from "@/db";
 import { users } from "@/db/schema";
 import { DEMO_EMAIL, DEMO_PASSWORD } from "@/db/seed";
+import { atelierPath } from "@/lib/safe-redirect";
 import { createSession, deleteSession } from "@/lib/session";
 
 export type AuthState = { error?: string; fields?: Record<string, string> } | undefined;
@@ -60,12 +61,12 @@ export async function login(_: AuthState, formData: FormData): Promise<AuthState
   redirect("/atelier");
 }
 
-export async function enterDemo() {
+export async function enterDemo(formData?: FormData) {
   await ensureDb();
   const [user] = await db.select().from(users).where(eq(users.email, DEMO_EMAIL)).limit(1);
   if (!user || !(await bcrypt.compare(DEMO_PASSWORD, user.passwordHash))) redirect("/login");
   await createSession(user.id);
-  redirect("/atelier");
+  redirect(atelierPath(formData?.get("next")));
 }
 
 export async function logout() {

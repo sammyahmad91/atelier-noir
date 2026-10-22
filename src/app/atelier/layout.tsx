@@ -1,5 +1,6 @@
 import { logout } from "@/app/actions/auth";
 import { AtelierNav } from "@/components/atelier-nav";
+import { NoirLauncher } from "@/components/noir-launcher";
 import { Wordmark } from "@/components/wordmark";
 import { requireUser } from "@/lib/dal";
 
@@ -25,6 +26,7 @@ export default async function AtelierLayout({ children }: LayoutProps<"/atelier"
         </div>
       </header>
       <div className="mx-auto w-full max-w-7xl flex-1 px-6 pb-28 md:px-10">{children}</div>
+      <NoirLauncher />
     </div>
   );
 }

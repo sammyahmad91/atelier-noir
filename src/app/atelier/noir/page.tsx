@@ -3,8 +3,9 @@ import { getWardrobe, getWears, requireUser } from "@/lib/dal";
 
 export const metadata = { title: "Noir AI — Atelier Noir" };
 
-export default async function NoirPage() {
-  const [user, wardrobe, wears] = await Promise.all([requireUser(), getWardrobe(), getWears()]);
+export default async function NoirPage({ searchParams }: PageProps<"/atelier/noir">) {
+  const [user, wardrobe, wears, sp] = await Promise.all([requireUser(), getWardrobe(), getWears(), searchParams]);
+  const question = typeof sp.q === "string" && sp.q.trim() ? sp.q.trim().slice(0, 600) : undefined;
 
   const worn = new Map<string, number>();
   for (const w of wears) worn.set(w.fragranceId, (worn.get(w.fragranceId) ?? 0) + 1);
@@ -19,5 +20,13 @@ export default async function NoirPage() {
     "What's running low?",
   ];
 
-  return <NoirConcierge storageKey={`noir:${user.id}`} bottles={wardrobe.length} wears={wears.length} suggestions={suggestions} />;
+  return (
+    <NoirConcierge
+      storageKey={`noir:${user.id}`}
+      bottles={wardrobe.length}
+      wears={wears.length}
+      suggestions={suggestions}
+      initialQuestion={question}
+    />
+  );
 }
