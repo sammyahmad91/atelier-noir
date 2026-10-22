@@ -185,7 +185,9 @@ export async function seedDemo(db: LibSQLDatabase<typeof schema>) {
     .limit(1);
   if (existing.length) return;
 
-  const userId = crypto.randomUUID();
+  // Fixed IDs: on serverless hosts each instance may seed its own database, and session
+  // cookies and bottle URLs must resolve identically on all of them.
+  const userId = "demo-camille";
   const now = Date.now();
   const day = 86_400_000;
 
@@ -197,7 +199,7 @@ export async function seedDemo(db: LibSQLDatabase<typeof schema>) {
     createdAt: new Date(now - 90 * day),
   });
 
-  const ids = BOTTLES.map(() => crypto.randomUUID());
+  const ids = BOTTLES.map((b) => `demo-${b.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w]+/g, "-").replace(/^-|-$/g, "").toLowerCase()}`);
   await db.insert(schema.fragrances).values(
     BOTTLES.map((b, i) => ({
       ...b,
@@ -208,8 +210,8 @@ export async function seedDemo(db: LibSQLDatabase<typeof schema>) {
   );
 
   await db.insert(schema.wears).values(
-    WEAR_HISTORY.map(([bottle, daysAgo, occasion, weather, compliments, rating, note]) => ({
-      id: crypto.randomUUID(),
+    WEAR_HISTORY.map(([bottle, daysAgo, occasion, weather, compliments, rating, note], i) => ({
+      id: `demo-wear-${i + 1}`,
       userId,
       fragranceId: ids[bottle],
       wornAt: new Date(now - daysAgo * day - 3 * 3_600_000),
