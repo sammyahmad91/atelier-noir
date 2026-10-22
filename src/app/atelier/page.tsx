@@ -98,6 +98,19 @@ export default async function SalonPage({ searchParams }: PageProps<"/atelier">)
                   <ChipLinks name="time" options={["day", "night"] as const} current={ctx.time} params={params} basePath="/atelier" />
                 </div>
               </div>
+              <Link
+                href="/atelier/noir"
+                className="group flex items-center gap-4 border-t hairline pt-7 transition-colors duration-500"
+              >
+                <span className="block h-2 w-2 shrink-0 rotate-45 bg-gold shadow-[0_0_14px_rgba(201,164,106,0.7)] transition-transform duration-700 group-hover:rotate-[225deg]" />
+                <span className="min-w-0 flex-1">
+                  <span className="eyebrow block text-[0.58rem] text-gold">Or ask NOIR AI</span>
+                  <span className="mt-2 block font-serif text-lg italic text-mist transition-colors group-hover:text-parchment">
+                    “Something warm for a rainy date?”
+                  </span>
+                </span>
+                <span className="text-gold transition-transform duration-500 group-hover:translate-x-1">→</span>
+              </Link>
             </div>
 
             <div key={`${ctx.occasion}-${ctx.weather}-${ctx.season}-${ctx.time}`}>

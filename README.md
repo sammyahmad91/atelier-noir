@@ -39,6 +39,35 @@ Demo credentials: `demo@ateliernoir.app` / `noir-demo-2026`
   (Sublime / Harmonious / Daring / Discordant), explains the bridge and clashes, and prescribes the ritual: which to
   apply first and how many sprays of each. Leave the second scent empty to rank every partner.
 - **Atelier insights** — neglected bottles, thin seasons, bottles running low, your current signature.
+- **Noir AI** (`/atelier/noir`) — a conversational concierge. See below.
+
+### Noir AI
+
+Instead of setting filters, you can ask in plain language — *“What should I wear tonight for a date?”*, *“What
+layers well with Santal 33?”*, *“Which bottles am I neglecting?”* — and NOIR answers from your own shelf and journal,
+with bottle and layering cards linking back into the app.
+
+**It is a mock model, honestly labelled.** There are no API keys and no network calls. The answers are composed
+deterministically by `src/lib/noir/`, which calls the same engine as the rest of the app:
+
+- **Intent detection** (`parse.ts`) — keyword and regex rules for tonight's pick (occasion, weather, season, hour
+  and mood words such as “fresher” are extracted from the text, falling back to the current season and hour),
+  layering, neglected bottles, compliments, running low, describing a bottle, finding a note or accord, wardrobe
+  gaps, greeting / help, and a graceful fallback. Bottle names are fuzzy-matched (typos, accents, `BR540`, `TdH`).
+- **Composition** (`compose.ts`) — each intent runs `rankForTonight`, `layer`, `accordProfile`, `lastWornMap` etc. on
+  the real data and writes a short editorial answer citing match %, rest days, compliments, harmony score and verdict,
+  and the spray ritual.
+- **Memory** — follow-ups like *“what about something fresher?”* or *“layer it with something”* reuse the evening
+  described earlier and the bottle NOIR last recommended, by reading the previous messages.
+- **Streaming** — `POST /api/noir` checks the session (401 otherwise), loads the collector's data, and returns a
+  `ReadableStream` of small text chunks with short delays, ending with a machine-readable `[[noir:{cards}]]` line the
+  client strips and renders as cards (`protocol.ts`).
+- **Swappable provider** — the route only knows the `NoirModel` interface (`respond(history, context)` yielding text
+  and card events). `getNoirModel()` reads `NOIR_PROVIDER` (default `mock`); a real LLM provider can be registered
+  there and grounded with the same context, without touching the UI or the route.
+
+The conversation lives in client state and is mirrored to `sessionStorage`, so it survives navigation and reloads
+within the tab.
 
 ### The engine, briefly
 
@@ -96,10 +125,12 @@ libSQL / SQLite · jose · bcryptjs · zod. Typefaces: Cormorant Garamond and Ma
 
 ```
 src/
-  app/                 routes — landing, login, signup, /atelier/* (salon, wardrobe, journal, layering)
+  app/                 routes — landing, login, signup, /atelier/* (salon, wardrobe, journal, layering, noir)
+  app/api/noir/        streaming endpoint for Noir AI
   app/actions/         server actions — auth, wardrobe, wears
   components/          Flacon (SVG bottle), Pyramid, AccordBars, forms
   db/                  Drizzle schema, client with self-creating schema, demo seed
   lib/engine.ts        accord profiles, tonight's pick, layering, insights
+  lib/noir/            Noir AI — intent parsing, mock model, provider interface, stream protocol
   lib/dal.ts           session-checked data access
 ```

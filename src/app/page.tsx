@@ -20,6 +20,11 @@ const RITUALS = [
     title: "The Layering Studio",
     body: "Pair two fragrances. We read their accords, find the note that bridges them, and tell you which to wear underneath — and how many sprays.",
   },
+  {
+    n: "IV",
+    title: "Noir AI",
+    body: "Or simply ask. A conversational concierge that answers in plain words from your own shelf and journal — tonight's pick, the perfect layer, the bottle you've forgotten.",
+  },
 ];
 
 const HERO_BOTTLES = [
@@ -111,7 +116,7 @@ export default async function Home() {
       <section className="relative mx-auto max-w-7xl px-6 pb-32 md:px-10">
         <div className="mb-16 flex items-end justify-between gap-8">
           <h2 className="display text-5xl md:text-6xl">
-            Three <span className="italic text-gold">rituals</span>
+            Four <span className="italic text-gold">rituals</span>
           </h2>
           <p className="eyebrow hidden md:block">What the atelier does</p>
         </div>
