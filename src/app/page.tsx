@@ -1,69 +1,150 @@
-import Image from "next/image";
+import Link from "next/link";
+import { enterDemo } from "@/app/actions/auth";
+import { Flacon } from "@/components/flacon";
+import { Wordmark } from "@/components/wordmark";
+import { getSessionUser } from "@/lib/dal";
 
-export default function Home() {
+const RITUALS = [
+  {
+    n: "I",
+    title: "The Wardrobe",
+    body: "Every bottle you own, drawn as it stands on your shelf — its pyramid, its family, its story, and exactly how much remains in the glass.",
+  },
+  {
+    n: "II",
+    title: "Tonight",
+    body: "Name the occasion and the weather. The atelier weighs season, rest, projection and the compliments each scent has earned you — then chooses.",
+  },
+  {
+    n: "III",
+    title: "The Layering Studio",
+    body: "Pair two fragrances. We read their accords, find the note that bridges them, and tell you which to wear underneath — and how many sprays.",
+  },
+];
+
+const HERO_BOTTLES = [
+  { name: "Santal 33", family: "Woody", remaining: 62, size: 150, d: 0, cls: "mt-16" },
+  { name: "Baccarat Rouge 540", family: "Amber", remaining: 78, size: 190, d: 1200, cls: "" },
+  { name: "Neroli Portofino", family: "Citrus", remaining: 40, size: 140, d: 2400, cls: "mt-24" },
+];
+
+export default async function Home() {
+  const user = await getSessionUser();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+    <main className="relative flex-1 overflow-hidden">
+      <header className="absolute inset-x-0 top-0 z-20 mx-auto flex max-w-7xl items-center justify-between px-6 py-8 md:px-10">
+        <Wordmark />
+        <nav className="flex items-center gap-8 text-[0.68rem] tracking-[0.28em] uppercase">
+          {user ? (
+            <Link href="/atelier" className="link-quiet">
+              Return to your atelier
+            </Link>
+          ) : (
+            <>
+              <Link href="/login" className="link-quiet">
+                Sign in
+              </Link>
+              <Link href="/signup" className="link-quiet hidden sm:inline">
+                Request a key
+              </Link>
+            </>
+          )}
+        </nav>
+      </header>
+
+      <section className="relative mx-auto grid min-h-[100svh] max-w-7xl items-center gap-16 px-6 pt-32 pb-20 md:px-10 lg:grid-cols-[1.05fr_1fr]">
+        <div>
+          <p className="eyebrow reveal" style={{ "--d": "100ms" } as React.CSSProperties}>
+            Maison privée · For those who collect scent
+          </p>
+          <h1
+            className="display reveal mt-8 text-[clamp(4.5rem,11vw,9.5rem)]"
+            style={{ "--d": "250ms" } as React.CSSProperties}
+          >
+            Atelier
+            <br />
+            <span className="italic text-gold">Noir</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p
+            className="reveal mt-10 max-w-md text-[1.05rem] leading-relaxed text-mist"
+            style={{ "--d": "450ms" } as React.CSSProperties}
+          >
+            A private wardrobe for the fragrances you love — their pyramids, their stories, and the nights they were
+            made for.
+          </p>
+          <div className="reveal mt-12 flex flex-wrap items-center gap-4" style={{ "--d": "650ms" } as React.CSSProperties}>
+            {user ? (
+              <Link href="/atelier" className="btn btn-gold">
+                Enter your atelier
+              </Link>
+            ) : (
+              <>
+                <Link href="/signup" className="btn btn-gold">
+                  Open your atelier
+                </Link>
+                <form action={enterDemo}>
+                  <button className="btn btn-ghost">Tour a collector&apos;s shelf</button>
+                </form>
+              </>
+            )}
+          </div>
+          <p className="reveal mt-6 font-serif text-sm italic text-dust" style={{ "--d": "800ms" } as React.CSSProperties}>
+            The tour opens Camille&apos;s atelier — nine bottles, two months of wear.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="relative flex h-[34rem] items-center justify-center">
+          <div className="glow absolute h-[30rem] w-[30rem] rounded-full bg-[radial-gradient(circle,rgba(201,164,106,0.28),transparent_65%)]" />
+          <div className="absolute bottom-16 h-px w-[80%] bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
+          <div className="relative flex items-end gap-6 md:gap-10">
+            {HERO_BOTTLES.map((b) => (
+              <figure key={b.name} className={`float reveal flex flex-col items-center ${b.cls}`} style={{ "--d": `${b.d}ms` } as React.CSSProperties}>
+                <Flacon name={b.name} family={b.family} remaining={b.remaining} size={b.size} />
+                <figcaption className="mt-4 font-serif text-sm italic text-mist">{b.name}</figcaption>
+              </figure>
+            ))}
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+
+      <section className="relative mx-auto max-w-7xl px-6 pb-32 md:px-10">
+        <div className="mb-16 flex items-end justify-between gap-8">
+          <h2 className="display text-5xl md:text-6xl">
+            Three <span className="italic text-gold">rituals</span>
+          </h2>
+          <p className="eyebrow hidden md:block">What the atelier does</p>
+        </div>
+        <div className="border-t hairline">
+          {RITUALS.map((r) => (
+            <article
+              key={r.n}
+              className="group grid gap-6 border-b hairline py-12 transition-colors duration-500 hover:bg-white/[0.015] md:grid-cols-[8rem_1fr_1.3fr] md:items-baseline"
+            >
+              <span className="display text-6xl italic text-gold-deep transition-colors duration-500 group-hover:text-gold">
+                {r.n}
+              </span>
+              <h3 className="display text-4xl">{r.title}</h3>
+              <p className="max-w-lg leading-relaxed text-mist">{r.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="relative mx-auto max-w-4xl px-6 pb-36 text-center md:px-10">
+        <div className="rule-gold mx-auto mb-14 w-40" />
+        <blockquote className="display text-[clamp(2.2rem,5vw,3.75rem)] italic leading-tight text-parchment/90">
+          “Perfume is the most intense form of memory.”
+        </blockquote>
+        <p className="eyebrow mt-8">Jean-Paul Guerlain</p>
+      </section>
+
+      <footer className="border-t hairline">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-10 text-xs text-dust md:flex-row md:px-10">
+          <Wordmark />
+          <p className="font-serif italic">Composed with patience. Worn with intention.</p>
+        </div>
+      </footer>
+    </main>
   );
 }
